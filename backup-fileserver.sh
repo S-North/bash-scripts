@@ -8,22 +8,25 @@
 
 ## set script variables
   now="$(date)"
-  fileserver=/media/fileserver
-  backup1=/media/backup-3TB-usb-seagate/backup
-  backup2=/media/backup-2TB-usb-wd/backup
+  fileserver=/media/fileserver                    # the root directory for all the user files to be backed up
+  device1=/media/backup-3TB-usb-seagate           # backup device 1's mount point [3TB Samsung USB drive]
+  device2=/media/backup-2TB-usb-wd                # backup device 2's mount point [2TB Western Digital USB drive]
+  backup1=$device1/backup                         # path to the backup folder on device 1
+  backup2=$device2/backup                         # path to the backup folder on device 2
 
-### inform user about the logging
+### inform user about where the script logs its output
   echo ''
   echo '## Backup script for fileserver'
-  echo '## The logs for this script are saved in a file called backuplog.log in the Backup folder of each USB drive'
+  echo '## The standard output for this script are saved in a file called backuplog.log in the Backup folder of each USB drive'
   echo "## e.g. $backup1/backuplog.log"
+  echo 'error output will be logged to this console'
 
 # mount the backup drives
   echo ''
   echo 'mounting backup drives'
   mount -a
 
-## check backup drives are mounted
+## check backup drives are mounted. If they are not found, exit the script with a message and the error text.
   if [ ! -d "$backup1/" ]; then
     echo 'unable to mount backup drive 3TB-usb-seagate'
     exit $?
@@ -34,9 +37,10 @@
     exit $?
   fi
 
+## If the drives are found, tell the user and continue
   echo 'Backup drives successfully mounted!'
 
-## backup media files to Samsung 3TB USB drive
+## backup media files to backup device 1
   echo '##########################################################' >> $backup1/backuplog.log
   echo "Backed up at $now" >> $backup1/backuplog.log
   echo '##########################################################' >> $backup1/backuplog.log
@@ -75,7 +79,7 @@
   echo 'Backing up scifi' >> $backup1/backuplog.log
   rsync $fileserver/scifi/ $backup1/scifi -vah >> $backup1/backuplog.log
 
-## backup other user files to Western Digital 2TB USB drive and remove deleted files from target
+## backup other user files to backup device 2
   echo '##########################################################' >> $backup2/backuplog.log
   echo "Backed up at $now" >> $backup2/backuplog.log
   echo '##########################################################' >> $backup2/backuplog.log
@@ -95,7 +99,7 @@
 ## unmount the backup drives
   echo ''
   echo 'Unmounting backup drives'
-  umount /media/backup-3TB-usb-seagate -l
-  umount /media/backup-2TB-usb-wd -l
+  umount $device1 -l
+  umount $device2 -l
   
   echo 'Done!'
