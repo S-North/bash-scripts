@@ -1,5 +1,15 @@
 #!/bin/bash
 
+## !! this is a variant of the script backup-fileserver.sh. This version automatically deletes files in the destination drive if it does not exist in the source. 
+## !! this is to tidy up the backup drive of files that have been correctly deleted on the source drive. No not run this automatically as it will 
+## !! DESTROY good backups if the source files are not available or deleted.  
+
+## This script is for doing a simple backup of a number of directories to some backup drives
+## the backup drives need to be listed in fstab to ensure they are mounted. This script runs 'mount -a' to ensure fstab entries are mounted.
+## the paths of the backup drives should be entered in the variables $backup1, $backup2, etc. Two drives have been used in this example but more can be added or removed as required.
+## the scripts uses rsync to backup the directories. The backup is updated each time the script is run. It does not keep previous versions
+## The script unmounts the backup devices once the backups have completed. This is to protect agains automated ransomware attacks against mounted paths
+
 ## set script variables
   now="$(date)"
   fileserver=/media/fileserver
