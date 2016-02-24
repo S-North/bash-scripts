@@ -1,5 +1,11 @@
 #!/bin/bash
 
+## This script is for doing a simple backup of a number of directories to some backup drives
+## the backup drives need to be listed in fstab to ensure they are mounted. This script runs 'mount -a' to ensure fstab entries are mounted.
+## the paths of the backup drives should be entered in the variables $backup1, $backup2, etc. Two drives have been used in this example but more can be added or removed as required.
+## the scripts uses rsync to backup the directories. The backup is updated each time the script is run. It does not keep previous versions
+## The script unmounts the backup devices once the backups have completed. This is to protect agains automated ransomware attacks against mounted paths
+
 ## set script variables
   now="$(date)"
   fileserver=/media/fileserver
