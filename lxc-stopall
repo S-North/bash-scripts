@@ -1,0 +1,8 @@
+#!/bin/bash
+list=$(lxc list --format csv -c n)
+
+for i in $list
+do 
+        lxc stop $i
+done
+
